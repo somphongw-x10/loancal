@@ -1,0 +1,197 @@
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.app-title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.app-subtitle {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.calculator-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 992px) {
+  .calculator-grid {
+    grid-template-columns: 350px 1fr;
+    align-items: start;
+  }
+}
+
+.form-section {
+  padding: 1.5rem;
+}
+
+.results-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Tiered Rates styling */
+.tier-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.tier-input-group {
+  flex: 1;
+}
+
+.tier-input-group label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.btn-icon {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  color: var(--danger);
+  background: var(--danger-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  height: 42px;
+  width: 42px;
+}
+
+.btn-icon:hover {
+  background: var(--danger);
+  color: white;
+}
+
+.add-tier-btn {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px dashed var(--primary);
+  color: var(--primary);
+  border-radius: 0.5rem;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.add-tier-btn:hover {
+  background: var(--primary-light);
+}
+
+/* Summary Card */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-label {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.summary-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.summary-value.primary {
+  color: var(--primary);
+}
+
+.summary-value.danger {
+  color: var(--danger);
+}
+
+/* Table */
+.table-container {
+  padding: 1.5rem;
+  overflow-x: auto;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.table-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.amortization-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+}
+
+.amortization-table th, 
+.amortization-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.amortization-table th {
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.amortization-table th:first-child,
+.amortization-table td:first-child {
+  text-align: center;
+}
+
+.amortization-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.amortization-table tbody tr:hover {
+  background-color: rgba(99, 102, 241, 0.05);
+}
+
+.error-message {
+  background-color: var(--danger-light);
+  color: var(--danger);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
