@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './index.css';
 import './App.css';
-import { calculateAmortization } from './utils/calculator';
+import { calculateAmortization, findRequiredMonthlyPayment } from './utils/calculator';
 import LoanForm from './components/LoanForm';
 import SummaryCard from './components/SummaryCard';
 import AmortizationTable from './components/AmortizationTable';
@@ -9,8 +9,10 @@ import { Calculator } from 'lucide-react';
 
 function App() {
   const [formData, setFormData] = useState({
+    calcMode: 'payment', // 'payment' or 'term'
     principal: 3000000,
     monthlyPayment: 15000,
+    loanTermYears: 30,
     tiers: [
       { startMonth: 1, rate: 3.0 },
       { startMonth: 37, rate: 5.5 }
@@ -22,11 +24,21 @@ function App() {
 
   const handleCalculate = () => {
     setError(null);
-    const calculationResult = calculateAmortization(
-      formData.principal,
-      formData.tiers,
-      formData.monthlyPayment
-    );
+    let calculationResult;
+    
+    if (formData.calcMode === 'payment') {
+      calculationResult = calculateAmortization(
+        formData.principal,
+        formData.tiers,
+        formData.monthlyPayment
+      );
+    } else {
+      calculationResult = findRequiredMonthlyPayment(
+        formData.principal,
+        formData.tiers,
+        formData.loanTermYears
+      );
+    }
 
     if (calculationResult.error) {
       setError(calculationResult.error);

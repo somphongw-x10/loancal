@@ -40,6 +40,29 @@ export default function LoanForm({ formData, setFormData, onCalculate }) {
     <form className="glass-panel form-section animate-fade-in" onSubmit={handleSubmit}>
       <h2 className="table-title" style={{ marginBottom: '1.5rem' }}>ข้อมูลสินเชื่อ</h2>
       
+      <div className="form-group" style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', background: 'var(--bg-card)', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem' }}>
+          <input 
+            type="radio" 
+            name="calcMode" 
+            value="payment" 
+            checked={formData.calcMode === 'payment'} 
+            onChange={(e) => setFormData(prev => ({...prev, calcMode: e.target.value}))} 
+          />
+          ระบุยอดผ่อนต่อเดือน
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem' }}>
+          <input 
+            type="radio" 
+            name="calcMode" 
+            value="term" 
+            checked={formData.calcMode === 'term'} 
+            onChange={(e) => setFormData(prev => ({...prev, calcMode: e.target.value}))} 
+          />
+          ระบุจำนวนปีที่กู้
+        </label>
+      </div>
+
       <div className="form-group">
         <label className="form-label">ยอดเงินต้น (บาท)</label>
         <input
@@ -54,22 +77,42 @@ export default function LoanForm({ formData, setFormData, onCalculate }) {
         />
       </div>
 
-      <div className="form-group">
-        <label className="form-label">ยอดผ่อนชำระต่อเดือน (บาท)</label>
-        <input
-          type="number"
-          name="monthlyPayment"
-          className="form-input"
-          value={formData.monthlyPayment}
-          onChange={handleChange}
-          min="100"
-          required
-          placeholder="เช่น 15000"
-        />
-        <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.25rem', display: 'block' }}>
-          * ยอดนี้ต้องมากกว่าดอกเบี้ยในแต่ละเดือน
-        </small>
-      </div>
+      {formData.calcMode === 'payment' ? (
+        <div className="form-group">
+          <label className="form-label">ยอดผ่อนชำระต่อเดือน (บาท)</label>
+          <input
+            type="number"
+            name="monthlyPayment"
+            className="form-input"
+            value={formData.monthlyPayment}
+            onChange={handleChange}
+            min="100"
+            required
+            placeholder="เช่น 15000"
+          />
+          <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.25rem', display: 'block' }}>
+            * ยอดนี้ต้องมากกว่าดอกเบี้ยในแต่ละเดือน
+          </small>
+        </div>
+      ) : (
+        <div className="form-group">
+          <label className="form-label">ระยะเวลาที่ต้องการผ่อน (ปี)</label>
+          <input
+            type="number"
+            name="loanTermYears"
+            className="form-input"
+            value={formData.loanTermYears}
+            onChange={handleChange}
+            min="1"
+            max="100"
+            required
+            placeholder="เช่น 30"
+          />
+          <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.25rem', display: 'block' }}>
+            * ระบบจะคำนวณค่างวดรายเดือนที่เหมาะสมให้
+          </small>
+        </div>
+      )}
 
       <div className="form-group" style={{ marginTop: '2rem' }}>
         <label className="form-label">อัตราดอกเบี้ยต่อปี (% แบบลดต้นลดดอก)</label>

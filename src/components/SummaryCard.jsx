@@ -16,6 +16,12 @@ export default function SummaryCard({ summary }) {
           <span className="summary-label">ยอดเงินต้น</span>
           <span className="summary-value">{formatCurrency(principal)} ฿</span>
         </div>
+        {summary.monthlyPayment && (
+          <div className="summary-item">
+            <span className="summary-label">ยอดผ่อนต่อเดือน</span>
+            <span className="summary-value" style={{ color: '#8b5cf6' }}>{formatCurrency(summary.monthlyPayment)} ฿</span>
+          </div>
+        )}
         <div className="summary-item">
           <span className="summary-label">ดอกเบี้ยรวมทั้งหมด</span>
           <span className="summary-value danger">{formatCurrency(totalInterest)} ฿</span>

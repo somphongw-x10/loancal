@@ -11,7 +11,6 @@ export function calculateAmortization(principal, tiers, monthlyPayment) {
     return { error: "กรุณาระบุข้อมูลให้ครบถ้วนและถูกต้อง" };
   }
 
-  // Sort tiers by startMonth to ensure correctness
   const sortedTiers = [...tiers].sort((a, b) => a.startMonth - b.startMonth);
 
   let balance = principal;
@@ -19,11 +18,9 @@ export function calculateAmortization(principal, tiers, monthlyPayment) {
   const schedule = [];
   let totalInterest = 0;
   
-  // Prevent infinite loops (e.g., if payment is less than interest)
   const MAX_MONTHS = 1200; // 100 years max
 
   while (balance > 0 && month <= MAX_MONTHS) {
-    // Find applicable interest rate for current month
     let currentRate = sortedTiers[0].rate;
     for (let i = sortedTiers.length - 1; i >= 0; i--) {
       if (month >= sortedTiers[i].startMonth) {
@@ -41,12 +38,10 @@ export function calculateAmortization(principal, tiers, monthlyPayment) {
       };
     }
 
-    // Actual payment might be less in the final month
     const actualPayment = Math.min(monthlyPayment, balance + interestForMonth);
     const principalPaid = actualPayment - interestForMonth;
 
     balance -= principalPaid;
-    // Handle floating point precision issues near zero
     if (balance < 0.01) balance = 0;
 
     totalInterest += interestForMonth;
@@ -73,7 +68,67 @@ export function calculateAmortization(principal, tiers, monthlyPayment) {
       totalInterest,
       totalPaid: principal + totalInterest,
       payoffMonths: schedule.length,
+      monthlyPayment: schedule[0]?.payment || monthlyPayment // Export initial payment amount
     },
     schedule
   };
+}
+
+function simulateBalance(principal, sortedTiers, monthlyPayment, targetMonths) {
+  let balance = principal;
+  for (let month = 1; month <= targetMonths; month++) {
+    let currentRate = sortedTiers[0].rate;
+    for (let i = sortedTiers.length - 1; i >= 0; i--) {
+      if (month >= sortedTiers[i].startMonth) {
+        currentRate = sortedTiers[i].rate;
+        break;
+      }
+    }
+    const monthlyInterest = balance * (currentRate / 100) / 12;
+    if (monthlyPayment <= monthlyInterest) return Infinity;
+    const principalPaid = monthlyPayment - monthlyInterest;
+    balance -= principalPaid;
+    if (balance <= 0) {
+      return month < targetMonths ? -1 : 0; 
+    }
+  }
+  return balance;
+}
+
+export function findRequiredMonthlyPayment(principal, tiers, targetYears) {
+  if (!principal || principal <= 0 || !targetYears || targetYears <= 0 || !tiers || tiers.length === 0) {
+    return { error: "กรุณาระบุข้อมูลให้ครบถ้วนและถูกต้อง" };
+  }
+
+  const targetMonths = targetYears * 12;
+  const sortedTiers = [...tiers].sort((a, b) => a.startMonth - b.startMonth);
+
+  let minPayment = principal / targetMonths;
+  let maxRate = Math.max(...tiers.map(t => t.rate));
+  let monthlyMaxRate = (maxRate / 100) / 12;
+  let maxPayment = monthlyMaxRate > 0 
+    ? principal * (monthlyMaxRate * Math.pow(1 + monthlyMaxRate, targetMonths)) / (Math.pow(1 + monthlyMaxRate, targetMonths) - 1)
+    : minPayment;
+
+  if (isNaN(maxPayment) || maxPayment === Infinity) maxPayment = principal;
+
+  let payment = (minPayment + maxPayment) / 2;
+
+  for (let iter = 0; iter < 100; iter++) {
+    const finalBalance = simulateBalance(principal, sortedTiers, payment, targetMonths);
+    if (finalBalance === Infinity || finalBalance > 0.01) {
+      minPayment = payment; 
+    } else if (finalBalance === -1) {
+      maxPayment = payment; 
+    } else {
+      break;
+    }
+    payment = (minPayment + maxPayment) / 2;
+  }
+  
+  // Round up to nearest 100 (standard bank practice)
+  const finalPayment = Math.ceil(payment / 100) * 100;
+  
+  // Calculate amortization with this found payment
+  return calculateAmortization(principal, tiers, finalPayment);
 }
